@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_KEY = "9b94be477609e938e50c425eee3bd6ef"; // Remplacez par votre clé API TMDB
+const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 
 const tmdbApi = {
@@ -13,11 +13,39 @@ const tmdbApi = {
           query,
           page,
           language: "fr-FR",
+          per_page: 10,
         },
       });
-      return response.data;
+      return {
+        ...response.data,
+        results: response.data.results.slice(0, 10),
+      };
     } catch (error) {
       console.error("Erreur lors de la recherche de films:", error);
+      throw error;
+    }
+  },
+
+  // Obtenir les films populaires
+  getPopularMovies: async (page = 1) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/movie/popular`, {
+        params: {
+          api_key: API_KEY,
+          page,
+          language: "fr-FR",
+          per_page: 10,
+        },
+      });
+      return {
+        ...response.data,
+        results: response.data.results.slice(0, 10),
+      };
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération des films populaires:",
+        error
+      );
       throw error;
     }
   },
@@ -31,9 +59,14 @@ const tmdbApi = {
           with_genres: genreId,
           page,
           language: "fr-FR",
+          per_page: 10,
+          sort_by: "popularity.desc",
         },
       });
-      return response.data;
+      return {
+        ...response.data,
+        results: response.data.results.slice(0, 10),
+      };
     } catch (error) {
       console.error(
         "Erreur lors de la récupération des films par genre:",

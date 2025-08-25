@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import tmdbApi from "../services/tmdbApi";
 
-const GenreSelect = ({ onGenreChange }) => {
+const GenreSelect = ({ onGenreChange, selectedGenre }) => {
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,19 +25,27 @@ const GenreSelect = ({ onGenreChange }) => {
   if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
-    <div className="mb-4">
-      <select
-        className="form-select"
-        onChange={(e) => onGenreChange(e.target.value)}
-        defaultValue=""
-      >
-        <option value="">Tous les genres</option>
+    <div className="genre-buttons">
+      <h5 className="mb-3">Catégories</h5>
+      <div className="d-flex flex-wrap gap-2">
+        <button
+          className={`btn ${selectedGenre === "" ? "btn-primary" : "btn-outline-primary"}`}
+          onClick={() => onGenreChange("")}
+        >
+          Tous les films
+        </button>
         {genres.map((genre) => (
-          <option key={genre.id} value={genre.id}>
+          <button
+            key={genre.id}
+            className={`btn ${
+              selectedGenre === genre.id.toString() ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => onGenreChange(genre.id.toString())}
+          >
             {genre.name}
-          </option>
+          </button>
         ))}
-      </select>
+      </div>
     </div>
   );
 };
